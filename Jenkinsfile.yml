@@ -1,0 +1,27 @@
+version: 0.1
+environment:
+  - FOO=${env.BUILD_NUMBER}
+pods:
+  first:
+    file: first.k8s.yml
+    checkout: false
+stages:
+  - steps:
+      - name: Step 0
+        raw: sh 'ls'
+  - pod: first
+    parallel: true
+    environment:
+      - FOO=${env.BUILD_NUMBER}
+    steps:
+      - name: Step 1
+        container: nginx
+        environment:
+          - FOO=${env.BUILD_NUMBER}
+        directory: /etc
+        commands:
+          - ls
+      - name: Step 2
+        container: nginx
+        commands:
+          - echo 'bar'
